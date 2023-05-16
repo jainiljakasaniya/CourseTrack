@@ -9,16 +9,8 @@
     "test": "mocha ./src/component/**/*.test.js",
     "docs": "swagger-jsdoc ./routes/*.route.js -d docs/api/swaggerDef.js -o docs/api/openApiSpecs.json"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:jainiljakasaniya/CourseTrack.git"
-  },
   "author": "jainil jakasaniya",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/jainiljakasaniya/CourseTrack/issues"
-  },
-  "homepage": "https://github.com/jainiljakasaniya/CourseTrack#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cookie-parser": "~1.4.6",
