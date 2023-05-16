@@ -1,7 +1,6 @@
 # Training App
 
-This is a Node.js project that provides an e-learning platform for students and trainer. The platform includes features such as course management, user management, blocked Student and ratings management.
-
+The CourseTrack is a web-based LMS application that allows users to access courses and learn at their own pace. The app provides various features such as course management,  ratings, enrollments, module management, lesson management, and student blocking. The application is designed to be user-friendly, easy to navigate, and provide an excellent  learning experience for users.
 ---
 ## Prerequisites
 
@@ -10,36 +9,9 @@ Make sure you have installed all of the following prerequisites on your machine:
 - #### Node - [Download & Install Node.js](https://nodejs.org/en/download)
 - #### PostgreSQL - [Download & Install PostgreSQL](https://www.postgresql.org/download/)
 
-## Project Dependencies
-   
-   - bcrypt: 5.1.0
-   - cookie-parser: 1.4.6
-   - dotenv: 16.0.3
-   - dotenv-safe: 8.2.0
-   - express: 4.18.2
-   - http-errors: 2.0.0
-   - joi: 17.9.0
-   - jsonwebtoken: 9.0.0
-   - morgan: 1.10.0
-   - pg: 8.10.0
-   - swagger-jsdoc: 6.2.8
-   - swagger-ui-express: 4.6.2
-
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to your.env file, which will be placed in the root directory.
-
-`DATABASE_USER`
-
-`DATABASE_HOST`
-
-`DATABASE_NAME`
-
-`DATABASE_PASSWORD`
-
-`DATABASE_PORT`
-
-`TOKEN_SECRET_KEY`
+To run this project, you will need to add the environment variables which is listed in .env.example file to your .env file, which will be placed in the .config/ directory.
 
 ## Run Project Locally
 
@@ -61,16 +33,20 @@ Install dependencies
 $ npm install
 ```
 
+Generate API Documentation
+
+```bash
+$ npm run docs
+```
+
 Start the server
 
 ```bash
 $ npm start
 ```
 
-
 ## Tech Stack
 
 **Database:** PostgreSQL
 
 **Server:** Node.js, Express.js
-

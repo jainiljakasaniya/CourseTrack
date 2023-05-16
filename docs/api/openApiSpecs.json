@@ -1,8 +1,8 @@
 {
   "info": {
-    "title": "E-learning Service",
+    "title": "CourseTrack : E-learning Service",
     "version": "0.0.1",
-    "description": "E-learning API documentation"
+    "description": "CourseTrack API documentation"
   },
   "host": "localhost:3000",
   "basePath": "/",

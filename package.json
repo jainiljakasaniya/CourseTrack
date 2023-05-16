@@ -1,7 +1,7 @@
 {
   "name": "coursetrack",
   "version": "1.0.0",
-  "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
+  "description": "",
   "main": "./bin/www",
   "scripts": {
     "start": "node ./bin/www",
@@ -14,10 +14,8 @@
   "dependencies": {
     "bcrypt": "^5.1.0",
     "cookie-parser": "~1.4.6",
-    "dotenv": "^16.0.3",
     "dotenv-safe": "^8.2.0",
     "express": "~4.18.2",
-    "http-errors": "~2.0.0",
     "joi": "^17.9.0",
     "jsonwebtoken": "^9.0.0",
     "morgan": "~1.10.0",

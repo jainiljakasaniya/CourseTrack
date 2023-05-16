@@ -1,165 +1,92 @@
--- DROP DATABASE IF EXISTS courseApp;
+-- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
+-- NOTE! If you have used non-SQL datatype in your design, you will have to change these here.
 
--- CREATE DATABASE courseApp WITH OWNER = postgres ENCODING = 'UTF8' LC_COLLATE = 'English_United States.1252' LC_CTYPE = 'English_United States.1252' TABLESPACE = pg_default CONNECTION
--- LIMIT = -1 IS_TEMPLATE = False;
-
--- public.users definition
-
--- Drop table
-
--- DROP TABLE public.users;
-
-CREATE TABLE public.users (
-	userid serial4 NOT NULL,
-	username varchar(20) NOT NULL,
-	useremail varchar(20) NOT NULL,
-	userpassword varchar NOT NULL,
-	userrole varchar(20) NOT NULL,
-	CONSTRAINT chk_userrole CHECK (((userrole)::text = ANY ((ARRAY['Student'::character varying, 'Trainer'::character varying])::text[]))),
-	CONSTRAINT pk_user PRIMARY KEY (userid),
-	CONSTRAINT uc_user_useremail UNIQUE (useremail)
+CREATE TABLE "users" (
+	"userId" int4 NOT NULL DEFAULT nextval('users_userid_seq'::regclass),
+	"userName" varchar(20) NOT NULL,
+	"userEmail" varchar(20) NOT NULL,
+	"userPassword" varchar NOT NULL,
+	"userRole" varchar(20) NOT NULL,
+	CONSTRAINT "chk_userrole" CHECK ((("userRole")::text = ANY ((ARRAY['Student'::character varying, 'Trainer'::character varying])::text[]))),
+	CONSTRAINT "pk_user" PRIMARY KEY ("userId"),
+	CONSTRAINT "uc_user_useremail" UNIQUE ("userEmail")
 );
 
--- public.modules definition
-
--- Drop table
-
--- DROP TABLE public.modules;
-
-CREATE TABLE public.modules (
-	moduleid serial4 NOT NULL,
-	modulename varchar(20) NOT NULL,
-	courseid int4 NOT NULL,
-	createdby int4 NOT NULL,
-	createdat date NOT NULL DEFAULT CURRENT_DATE,
-	updatedby int4 NULL,
-	updatedat date NULL,
-	CONSTRAINT pk_modules PRIMARY KEY (moduleid)
+CREATE TABLE "courses" (
+	"courseId" int4 NOT NULL DEFAULT nextval('course_courseid_seq'::regclass),
+	"courseName" varchar(20) NOT NULL,
+	"courseDescription" varchar(200) NOT NULL,
+	"trainerId" int4 NOT NULL,
+	"createdBy" int4 NOT NULL,
+	"createdAt" date NOT NULL DEFAULT CURRENT_DATE,
+	"updatedBy" int4 NULL,
+	"updatedAt" date NULL,
+	CONSTRAINT "pk_course" PRIMARY KEY ("courseId"),
+	CONSTRAINT "fk_course_createdby" FOREIGN KEY ("createdBy") REFERENCES "users"("userId"),
+	CONSTRAINT "fk_course_trainerid" FOREIGN KEY ("trainerId") REFERENCES "users"("userId"),
+	CONSTRAINT "fk_course_updatedby" FOREIGN KEY ("updatedBy") REFERENCES "users"("userId")
 );
 
--- public.modules foreign keys
-
-ALTER TABLE public.modules ADD CONSTRAINT fk_modules_courseid FOREIGN KEY (courseid) REFERENCES public.course(courseid);
-ALTER TABLE public.modules ADD CONSTRAINT fk_modules_createdby FOREIGN KEY (createdby) REFERENCES public.users(userid);
-ALTER TABLE public.modules ADD CONSTRAINT fk_modules_updatedby FOREIGN KEY (updatedby) REFERENCES public.users(userid);
-
-
--- public.lessons definition
-
--- Drop table
-
--- DROP TABLE public.lessons;
-
-CREATE TABLE public.lessons (
-	lessonid serial4 NOT NULL,
-	lessonname varchar(20) NOT NULL,
-	lessonlink varchar(50) NOT NULL,
-	moduleid int4 NOT NULL,
-	lessondiscription varchar(200) NOT NULL,
-	createdby int4 NOT NULL,
-	createdat date NOT NULL DEFAULT CURRENT_DATE,
-	updatedby int4 NULL,
-	updatedat date NULL,
-	CONSTRAINT pk_lessons PRIMARY KEY (lessonid)
+CREATE TABLE "modules" (
+	"moduleId" int4 NOT NULL DEFAULT nextval('modules_moduleid_seq'::regclass),
+	"moduleName" varchar(20) NOT NULL,
+	"courseId" int4 NOT NULL,
+	"createdBy" int4 NOT NULL,
+	"createdAt" date NOT NULL DEFAULT CURRENT_DATE,
+	"updatedBy" int4 NULL,
+	"updatedAt" date NULL,
+	CONSTRAINT "pk_modules" PRIMARY KEY ("moduleId"),
+	CONSTRAINT "fk_modules_courseid" FOREIGN KEY ("courseId") REFERENCES "courses"("courseId"),
+	CONSTRAINT "fk_modules_createdby" FOREIGN KEY ("createdBy") REFERENCES "users"("userId"),
+	CONSTRAINT "fk_modules_updatedby" FOREIGN KEY ("updatedBy") REFERENCES "users"("userId")
 );
 
--- public.lessons foreign keys
-
-ALTER TABLE public.lessons ADD CONSTRAINT fk_lessons_createdby FOREIGN KEY (createdby) REFERENCES public.users(userid);
-ALTER TABLE public.lessons ADD CONSTRAINT fk_lessons_moduleid FOREIGN KEY (moduleid) REFERENCES public.modules(moduleid);
-ALTER TABLE public.lessons ADD CONSTRAINT fk_lessons_updatedby FOREIGN KEY (updatedby) REFERENCES public.users(userid);
-
-
--- public.enrollment definition
-
--- Drop table
-
--- DROP TABLE public.enrollment;
-
-CREATE TABLE public.enrollment (
-	enrollid serial4 NOT NULL,
-	enrollat date NOT NULL DEFAULT CURRENT_DATE,
-	studentid int4 NOT NULL,
-	courseid int4 NOT NULL,
-	CONSTRAINT pk_enrollment PRIMARY KEY (enrollid)
+CREATE TABLE "lessons" (
+	"lessonId" int4 NOT NULL DEFAULT nextval('lessons_lessonid_seq'::regclass),
+	"lessonName" varchar(20) NOT NULL,
+	"lessonLink" varchar(50) NOT NULL,
+	"moduleId" int4 NOT NULL,
+	"lessonDescription" varchar(200) NOT NULL,
+	"createdBy" int4 NOT NULL,
+	"createdAt" date NOT NULL DEFAULT CURRENT_DATE,
+	"updatedBy" int4 NULL,
+	"updatedAt" date NULL,
+	CONSTRAINT "pk_lessons" PRIMARY KEY ("lessonId"),
+	CONSTRAINT "fk_lessons_createdby" FOREIGN KEY ("createdBy") REFERENCES "users"("userId"),
+	CONSTRAINT "fk_lessons_moduleid" FOREIGN KEY ("moduleId") REFERENCES "modules"("moduleId"),
+	CONSTRAINT "fk_lessons_updatedby" FOREIGN KEY ("updatedBy") REFERENCES "users"("userId")
 );
 
-
--- public.enrollment foreign keys
-
-ALTER TABLE public.enrollment ADD CONSTRAINT fk_enrollment_courseid FOREIGN KEY (courseid) REFERENCES public.course(courseid);
-ALTER TABLE public.enrollment ADD CONSTRAINT fk_enrollment_studentid FOREIGN KEY (studentid) REFERENCES public.users(userid);
-
-
--- public.courserating definition
-
--- Drop table
-
--- DROP TABLE public.courserating;
-
-CREATE TABLE public.courserating (
-	ratingid serial4 NOT NULL,
-	rating float8 NOT NULL DEFAULT 0,
-	ratedat date NOT NULL DEFAULT CURRENT_DATE,
-	courseid int4 NOT NULL,
-	studentid int4 NOT NULL,
-	CONSTRAINT chk_rating CHECK (((rating >= (0)::double precision) AND (rating <= (10)::double precision))),
-	CONSTRAINT pk_courserating PRIMARY KEY (ratingid)
+CREATE TABLE "enrollments" (
+	"enrollId" int4 NOT NULL DEFAULT nextval('enrollment_enrollid_seq'::regclass),
+	"enrollAt" date NOT NULL DEFAULT CURRENT_DATE,
+	"studentId" int4 NOT NULL,
+	"courseId" int4 NOT NULL,
+	CONSTRAINT "pk_enrollment" PRIMARY KEY ("enrollId"),
+	CONSTRAINT "fk_enrollment_courseid" FOREIGN KEY ("courseId") REFERENCES "courses"("courseId"),
+	CONSTRAINT "fk_enrollment_studentid" FOREIGN KEY ("studentId") REFERENCES "users"("userId")
 );
 
-
--- public.courserating foreign keys
-
-ALTER TABLE public.courserating ADD CONSTRAINT fk_courserating_courseid FOREIGN KEY (courseid) REFERENCES public.course(courseid);
-ALTER TABLE public.courserating ADD CONSTRAINT fk_courserating_studentid FOREIGN KEY (studentid) REFERENCES public.users(userid);
-
-
--- public.course definition
-
--- Drop table
-
--- DROP TABLE public.course;
-
-CREATE TABLE public.course (
-	courseid serial4 NOT NULL,
-	coursename varchar(20) NOT NULL,
-	coursediscription varchar(200) NOT NULL,
-	courserating float8 NOT NULL DEFAULT 0,
-	trainerid int4 NOT NULL,
-	createdby int4 NOT NULL,
-	createdat date NOT NULL DEFAULT CURRENT_DATE,
-	updatedby int4 NULL,
-	updatedat date NULL,
-	CONSTRAINT chk_courserating CHECK (((courserating >= (0)::double precision) AND (courserating <= (10)::double precision))),
-	CONSTRAINT pk_course PRIMARY KEY (courseid)
+CREATE TABLE "courseRatings" (
+	"ratingId" int4 NOT NULL DEFAULT nextval('courserating_ratingid_seq'::regclass),
+	"rating" float8 NOT NULL DEFAULT 0,
+	"ratedAt" date NOT NULL DEFAULT CURRENT_DATE,
+	"courseId" int4 NOT NULL,
+	"studentId" int4 NOT NULL,
+	CONSTRAINT "chk_rating" CHECK ((("rating" >= (0)::double precision) AND ("rating" <= (10)::double precision))),
+	CONSTRAINT "pk_courserating" PRIMARY KEY ("ratingId"),
+	CONSTRAINT "fk_courserating_courseid" FOREIGN KEY ("courseId") REFERENCES "courses"("courseId"),
+	CONSTRAINT "fk_courserating_studentid" FOREIGN KEY ("studentId") REFERENCES "users"("userId")
 );
 
-
--- public.course foreign keys
-
-ALTER TABLE public.course ADD CONSTRAINT fk_course_createdby FOREIGN KEY (createdby) REFERENCES public.users(userid);
-ALTER TABLE public.course ADD CONSTRAINT fk_course_trainerid FOREIGN KEY (trainerid) REFERENCES public.users(userid);
-ALTER TABLE public.course ADD CONSTRAINT fk_course_updatedby FOREIGN KEY (updatedby) REFERENCES public.users(userid);
-
-
--- public.blockstudent definition
-
--- Drop table
-
--- DROP TABLE public.blockstudent;
-
-CREATE TABLE public.blockstudent (
-	blockstudentid serial4 NOT NULL,
-	blockedby int4 NOT NULL,
-	studentid int4 NOT NULL,
-	courseid int4 NOT NULL,
-	blockedat date NOT NULL DEFAULT CURRENT_DATE,
-	CONSTRAINT pk_blockstudent PRIMARY KEY (blockstudentid)
+CREATE TABLE "blockStudents" (
+	"blockstudentId" int4 NOT NULL DEFAULT nextval('blockstudent_blockstudentid_seq'::regclass),
+	"blockedBy" int4 NOT NULL,
+	"studentId" int4 NOT NULL,
+	"courseId" int4 NOT NULL,
+	"blockedAt" date NOT NULL DEFAULT CURRENT_DATE,
+	CONSTRAINT "pk_blockstudent" PRIMARY KEY ("blockstudentId"),
+	CONSTRAINT "fk_blockstudent_blockedby" FOREIGN KEY ("blockedBy") REFERENCES "users"("userId"),
+	CONSTRAINT "fk_blockstudent_courseid" FOREIGN KEY ("courseId") REFERENCES "courses"("courseId"),
+	CONSTRAINT "fk_blockstudent_studentid" FOREIGN KEY ("studentId") REFERENCES "users"("userId")
 );
-
-
--- public.blockstudent foreign keys
-
-ALTER TABLE public.blockstudent ADD CONSTRAINT fk_blockstudent_blockedby FOREIGN KEY (blockedby) REFERENCES public.users(userid);
-ALTER TABLE public.blockstudent ADD CONSTRAINT fk_blockstudent_courseid FOREIGN KEY (courseid) REFERENCES public.course(courseid);
-ALTER TABLE public.blockstudent ADD CONSTRAINT fk_blockstudent_studentid FOREIGN KEY (studentid) REFERENCES public.users(userid);
