@@ -7,7 +7,7 @@ const saltRounds = parseInt(tokenSaltRound, 10);
 const TOKEN_KEY = tokenSecretKey;
 
 module.exports = {
-  // To register a new user
+  // To create a new user account
   register: async (reqBody) => {
     const {
       userName, userEmail, userPassword, userRole
